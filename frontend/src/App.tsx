@@ -195,6 +195,32 @@ function App() {
              {guideData && (
                <div className="dashboard-grid">
                  <div className="flex-col gap-6">
+                   <div className="card fade-in flex justify-between items-center" style={{ padding: '1.5rem', backgroundColor: 'var(--color-blue-light)' }}>
+                     <div>
+                       <h3 className="text-blue" style={{ marginBottom: '0.25rem' }}>Stay Updated</h3>
+                       <p className="text-muted" style={{ fontSize: '0.9rem' }}>Get browser notifications for upcoming deadlines.</p>
+                     </div>
+                     <button 
+                       className="btn btn-primary" 
+                       style={{ padding: '0.5rem 1rem' }}
+                       onClick={() => {
+                         if (!("Notification" in window)) {
+                           alert("This browser does not support desktop notification");
+                         } else if (Notification.permission === "granted") {
+                           new Notification("Election Guide Assistant", { body: "Alerts are already active!" });
+                         } else if (Notification.permission !== "denied") {
+                           Notification.requestPermission().then((permission) => {
+                             if (permission === "granted") {
+                               new Notification("Election Guide Assistant", { body: "You will now receive election deadline alerts!" });
+                             }
+                           });
+                         }
+                       }}
+                     >
+                       Enable Alerts
+                     </button>
+                   </div>
+
                    <Checklist items={guideData.checklist} />
                    
                    <div className="card fade-in">
@@ -222,8 +248,25 @@ function App() {
                    </div>
                  </div>
                  
-                 <div>
+                 <div className="flex-col gap-6">
                    <Timeline events={guideData.timeline} />
+
+                   <div className="card fade-in">
+                     <h3 className="mb-4">Find Polling Booth</h3>
+                     <p className="text-muted mb-4" style={{ fontSize: '0.9rem' }}>Locate the nearest polling stations in your area.</p>
+                     <iframe 
+                        width="100%" 
+                        height="250" 
+                        style={{ border: 0, borderRadius: 'var(--border-radius-md)' }} 
+                        loading="lazy" 
+                        allowFullScreen 
+                        referrerPolicy="no-referrer-when-downgrade" 
+                        src="https://maps.google.com/maps?q=polling+station+near+me&t=&z=13&ie=UTF8&iwloc=&output=embed">
+                     </iframe>
+                     <a href="https://maps.google.com/maps?q=polling+station+near+me" target="_blank" rel="noopener noreferrer" className="btn btn-outline mt-4" style={{ width: '100%' }}>
+                       Open in Google Maps
+                     </a>
+                   </div>
                  </div>
                </div>
              )}

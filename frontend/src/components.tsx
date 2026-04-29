@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, CheckCircle, CalendarPlus } from 'lucide-react';
 
 interface AccordionItemProps {
   title: string;
@@ -66,6 +66,7 @@ interface TimelineEvent {
   date: string;
   title: string;
   description: string;
+  calendarLink?: string;
 }
 
 export const Timeline: React.FC<{ events: TimelineEvent[] }> = ({ events }) => {
@@ -80,6 +81,11 @@ export const Timeline: React.FC<{ events: TimelineEvent[] }> = ({ events }) => {
             <span className="timeline-date">{event.date}</span>
             <h4>{event.title}</h4>
             <p className="text-muted">{event.description}</p>
+            {event.calendarLink && (
+               <a href={event.calendarLink} target="_blank" rel="noopener noreferrer" className="btn btn-outline mt-2" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>
+                  <CalendarPlus size={14} /> Add to Calendar
+               </a>
+            )}
           </div>
         ))}
       </div>

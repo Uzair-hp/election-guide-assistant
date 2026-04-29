@@ -26,12 +26,18 @@ interface TimelineEvent {
   date: string;
   title: string;
   description: string;
+  calendarLink?: string;
 }
 
 interface GuideResponse {
   checklist: Action[];
   timeline: TimelineEvent[];
 }
+
+const generateCalendarLink = (title: string, description: string) => {
+  const baseUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+  return `${baseUrl}&text=${encodeURIComponent(title)}&details=${encodeURIComponent(description)}`;
+};
 
 app.post('/api/generate-guide', (req: Request, res: Response) => {
   const { age, status, category } = req.body as GuideRequest;
@@ -50,10 +56,30 @@ app.post('/api/generate-guide', (req: Request, res: Response) => {
 
   const checklist: Action[] = [];
   const timeline: TimelineEvent[] = [
-    { date: "Soon", title: "Election Announcement", description: "ECI announces election dates." },
-    { date: "TBD", title: "Last Date for Voter Registration", description: "Ensure your name is on the electoral roll before this date." },
-    { date: "TBD", title: "Polling Day", description: "Cast your vote at your designated polling booth." },
-    { date: "TBD", title: "Counting Day", description: "Results are declared." }
+    { 
+      date: "Soon", 
+      title: "Election Announcement", 
+      description: "ECI announces election dates.",
+      calendarLink: generateCalendarLink("Election Announcement Expected", "ECI announces election dates. Watch news for updates.")
+    },
+    { 
+      date: "TBD", 
+      title: "Last Date for Voter Registration", 
+      description: "Ensure your name is on the electoral roll before this date.",
+      calendarLink: generateCalendarLink("Voter Registration Deadline", "Ensure your name is on the electoral roll before this date.")
+    },
+    { 
+      date: "TBD", 
+      title: "Polling Day", 
+      description: "Cast your vote at your designated polling booth.",
+      calendarLink: generateCalendarLink("Election Polling Day", "Cast your vote at your designated polling booth.")
+    },
+    { 
+      date: "TBD", 
+      title: "Counting Day", 
+      description: "Results are declared.",
+      calendarLink: generateCalendarLink("Election Counting Day", "Results are declared.")
+    }
   ];
 
   if (status === 'Not Registered' || status === 'Unsure') {

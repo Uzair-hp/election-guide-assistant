@@ -1,69 +1,59 @@
-# Election Guide Assistant (India)
+# Election Guide Assistant
 
-A Dynamic Personalized Assistant tailored for the Indian electoral system. The goal of this project is to provide citizens with a clear, step-by-step guide and personalized timeline based on their current voter registration status.
+A Dynamic Personalized Assistant built for the Hackathon Challenge. This project is tailored for the Indian electoral system to help citizens navigate the complex registration and voting process.
 
-## Features
+## 1. Chosen Vertical
+**Civic Tech / Election Guide Assistant**
+I chose this vertical to empower citizens by simplifying electoral procedures. The goal is to provide a highly localized, step-by-step guide and personalized timeline based on a user's current voter registration status and category.
 
-- **Onboarding Questionnaire:** An interactive step-by-step form to determine user eligibility (Age), current registration status, and voter category (General vs. NRI/Overseas).
-- **Personalized Dashboard:** 
-  - **Action Checklist:** A tailored step-by-step guide with relevant forms (Form 6, Form 6A, etc.) based on user inputs.
-  - **Interactive Timeline:** A visual representation of upcoming election deadlines.
-- **Information Hub:** Interactive accordions explaining Voting Day procedures (EVM/VVPAT) and acceptable ID documents.
+## 2. Approach and Logic
+The application logic revolves around a dynamic state-machine driven by user inputs:
+1. **Eligibility Check:** The user inputs their age. If under 18, the system immediately returns an ineligible status.
+2. **Status Determination:** The user selects if they are Registered, Not Registered, or Unsure.
+3. **Category Selection:** The user specifies if they are a General Voter or NRI/Overseas.
+4. **Dynamic Output:** Based on these three data points, the backend calculates the correct sequence of actions (e.g., prompting Form 6 for unregistered general voters, or Form 6A for NRIs) and generates a personalized action checklist and event timeline.
 
-## Tech Stack
+## 3. How the Solution Works
+The solution uses a decoupled modern architecture to ensure clean code and fast performance:
+- **Frontend (Vite + React + TypeScript):** Handles the interactive onboarding questionnaire and renders the personalized dashboard. It features a custom "Alerts System" using the native Browser Notifications API, an Interactive Timeline, and an Information Hub.
+- **Backend (Node.js + Express + TypeScript):** Acts as the decision engine. It exposes a single `POST /api/generate-guide` endpoint that processes the user's state and returns the tailored checklist and timeline data.
 
-- **Frontend:** React, Vite, TypeScript, Vanilla CSS.
-- **Backend:** Node.js, Express, TypeScript.
+## 4. Google Services Integration
+This project integrates multiple meaningful Google Services to provide real-world usability:
+1. **Google Calendar:** The interactive timeline automatically generates "Add to Calendar" links for each upcoming deadline, allowing users to schedule reminders instantly using the Google Calendar Template URL API.
+2. **Google Maps:** The personalized dashboard embeds an interactive Google Map configured to automatically search for and display "polling stations near me", providing instant, localized logistical help without requiring the user to leave the app.
+
+## 5. Assumptions Made
+- The user is an Indian citizen navigating the Election Commission of India (ECI) process.
+- Deadlines and specific election dates are marked as "TBD" or "Soon" in the mock data, assuming a real-world scenario where the backend would fetch live dates from a database or ECI API.
+- The user's browser supports the `Notification` API for the Alerts feature.
+
+---
 
 ## Getting Started
 
 ### Prerequisites
+- Node.js (v18+)
 
-- Node.js (v18 or higher recommended)
-- npm or yarn
+### Running the App Easily
+You can launch both the frontend and backend servers simultaneously by running the included batch script from the root folder:
+```bash
+.\start.bat
+```
+*(Or simply double-click `start.bat` in your File Explorer)*. The app will open at `http://localhost:56310/`.
 
-### Running the Backend
+### Running Manually
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the server (runs on `http://localhost:3001` by default):
-   ```bash
-   npm run dev
-   # OR run the compiled version
-   # node src/index.js
-   ```
+**Backend:**
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-### Running the Frontend
-
-1. Open a new terminal and navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-4. Open the provided local URL in your browser (usually `http://localhost:56310` or `http://localhost:5173`).
-
-## Project Structure
-
-- `frontend/` - Contains the React application. Key logic is located in `src/App.tsx` and components are inside `src/components.tsx`.
-- `backend/` - Contains the Express server. The main API endpoint (`/api/generate-guide`) is defined in `src/index.ts`.
-
-## Design System
-
-The application uses a custom design system built with vanilla CSS variables representing the Indian tricolor (Saffron, White, Green) with Ashoka Chakra Blue accents.
-
-## License
-
-MIT License
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
