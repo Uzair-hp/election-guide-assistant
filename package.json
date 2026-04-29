@@ -4,6 +4,7 @@
   "description": "Root package for unified cloud deployment",
   "scripts": {
     "install": "npm install --include=dev --prefix backend && npm install --include=dev --prefix frontend",
+    "gcp-build": "npm run build --prefix frontend && npm run build --prefix backend",
     "build": "npm run build --prefix frontend && npm run build --prefix backend",
     "start": "node backend/src/index.js"
   }
