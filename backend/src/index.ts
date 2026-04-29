@@ -1,0 +1,97 @@
+import express, { type Request, type Response } from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 3001;
+
+app.use(cors());
+app.use(express.json());
+
+interface GuideRequest {
+  age: number;
+  status: 'Registered' | 'Not Registered' | 'Unsure';
+  category: 'General' | 'NRI/Overseas';
+}
+
+interface Action {
+  title: string;
+  description: string;
+  link?: string;
+}
+
+interface TimelineEvent {
+  date: string;
+  title: string;
+  description: string;
+}
+
+interface GuideResponse {
+  checklist: Action[];
+  timeline: TimelineEvent[];
+}
+
+app.post('/api/generate-guide', (req: Request, res: Response) => {
+  const { age, status, category } = req.body as GuideRequest;
+
+  if (age < 18) {
+    return res.json({
+      checklist: [
+        {
+          title: "Wait until you're 18",
+          description: "You must be 18 years or older to vote in India.",
+        }
+      ],
+      timeline: []
+    });
+  }
+
+  const checklist: Action[] = [];
+  const timeline: TimelineEvent[] = [
+    { date: "Soon", title: "Election Announcement", description: "ECI announces election dates." },
+    { date: "TBD", title: "Last Date for Voter Registration", description: "Ensure your name is on the electoral roll before this date." },
+    { date: "TBD", title: "Polling Day", description: "Cast your vote at your designated polling booth." },
+    { date: "TBD", title: "Counting Day", description: "Results are declared." }
+  ];
+
+  if (status === 'Not Registered' || status === 'Unsure') {
+    if (category === 'NRI/Overseas') {
+       checklist.push({
+         title: "Fill Form 6A",
+         description: "As an NRI, you need to fill Form 6A to register as an overseas elector.",
+         link: "https://voters.eci.gov.in/"
+       });
+    } else {
+      checklist.push({
+        title: "Fill Form 6",
+        description: "Apply online for registration as a new voter using Form 6.",
+        link: "https://voters.eci.gov.in/"
+      });
+    }
+    if (status === 'Unsure') {
+       checklist.unshift({
+        title: "Check Electoral Roll",
+        description: "Search your name in the electoral roll to confirm if you are already registered.",
+        link: "https://electoralsearch.eci.gov.in/"
+      });
+    }
+  } else if (status === 'Registered') {
+     checklist.push({
+        title: "Verify Details",
+        description: "Check your voter slip and verify your polling booth location.",
+        link: "https://electoralsearch.eci.gov.in/"
+     });
+     checklist.push({
+        title: "Know your Candidates",
+        description: "Research the candidates contesting from your constituency using the KYC App."
+     });
+  }
+
+  res.json({ checklist, timeline });
+});
+
+app.listen(port, () => {
+  console.log(`Backend server running on port ${port}`);
+});
