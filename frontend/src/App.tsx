@@ -11,7 +11,7 @@ interface GuideData {
 }
 
 function App() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [age, setAge] = useState<string>('');
   const [status, setStatus] = useState<Status>(null);
   const [category, setCategory] = useState<Category>(null);
@@ -56,7 +56,7 @@ function App() {
   };
 
   const resetForm = () => {
-    setStep(1);
+    setStep(0);
     setAge('');
     setStatus(null);
     setCategory(null);
@@ -73,7 +73,35 @@ function App() {
       </header>
       
       <main className="container" style={{ padding: '2rem 1rem', flex: 1 }}>
-        {step < 4 ? (
+        {step === 0 && (
+          <div className="hero-section fade-in" style={{ textAlign: 'center', padding: '4rem 0' }}>
+            <h2 className="text-saffron" style={{ fontSize: '3rem', marginBottom: '1rem' }}>Your Vote. Your Voice.</h2>
+            <p className="text-muted" style={{ fontSize: '1.25rem', maxWidth: '800px', margin: '0 auto 2rem auto', lineHeight: '1.8' }}>
+              Welcome to the Election Guide Assistant! Navigating the electoral process shouldn't be confusing. 
+              Our smart assistant will ask you a few quick questions and generate a highly personalized action plan, 
+              complete with important deadlines, required forms, and local polling station information.
+            </p>
+            <button className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem', borderRadius: '50px' }} onClick={() => setStep(1)}>
+              Get Started Now
+            </button>
+            <div className="mt-8" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', textAlign: 'left', marginTop: '4rem' }}>
+               <div className="card fade-in" style={{ animationDelay: '0.1s' }}>
+                  <h3 className="text-blue mb-2">Smart Action Plan</h3>
+                  <p className="text-muted">Receive a customized checklist of forms and steps based precisely on your registration status.</p>
+               </div>
+               <div className="card fade-in" style={{ animationDelay: '0.2s' }}>
+                  <h3 className="text-green mb-2">Track Deadlines</h3>
+                  <p className="text-muted">Never miss a deadline with our interactive timeline and seamless "Add to Calendar" integrations.</p>
+               </div>
+               <div className="card fade-in" style={{ animationDelay: '0.3s' }}>
+                  <h3 className="text-saffron mb-2">Locate Polling Booths</h3>
+                  <p className="text-muted">Instantly find the nearest polling stations using our built-in interactive Google Maps finder.</p>
+               </div>
+            </div>
+          </div>
+        )}
+
+        {step > 0 && step < 4 && (
           <div className="questionnaire-container fade-in">
             <div className="card">
               <div className="stepper">
@@ -185,7 +213,9 @@ function App() {
               </div>
             </div>
           </div>
-        ) : (
+        )}
+        
+        {step === 4 && (
           <div className="dashboard-view fade-in">
              <div className="flex justify-between items-center mb-6">
                 <h2>Your Personalized Election Guide</h2>
