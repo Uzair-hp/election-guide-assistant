@@ -1,11 +1,21 @@
 import express, {} from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
+const generateCalendarLink = (title, description) => {
+    const baseUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+    return `${baseUrl}&text=${encodeURIComponent(title)}&details=${encodeURIComponent(description)}`;
+};
 app.post('/api/generate-guide', (req, res) => {
     const { age, status, category } = req.body;
     if (age < 18) {
@@ -21,10 +31,30 @@ app.post('/api/generate-guide', (req, res) => {
     }
     const checklist = [];
     const timeline = [
-        { date: "Soon", title: "Election Announcement", description: "ECI announces election dates." },
-        { date: "TBD", title: "Last Date for Voter Registration", description: "Ensure your name is on the electoral roll before this date." },
-        { date: "TBD", title: "Polling Day", description: "Cast your vote at your designated polling booth." },
-        { date: "TBD", title: "Counting Day", description: "Results are declared." }
+        {
+            date: "Soon",
+            title: "Election Announcement",
+            description: "ECI announces election dates.",
+            calendarLink: generateCalendarLink("Election Announcement Expected", "ECI announces election dates. Watch news for updates.")
+        },
+        {
+            date: "TBD",
+            title: "Last Date for Voter Registration",
+            description: "Ensure your name is on the electoral roll before this date.",
+            calendarLink: generateCalendarLink("Voter Registration Deadline", "Ensure your name is on the electoral roll before this date.")
+        },
+        {
+            date: "TBD",
+            title: "Polling Day",
+            description: "Cast your vote at your designated polling booth.",
+            calendarLink: generateCalendarLink("Election Polling Day", "Cast your vote at your designated polling booth.")
+        },
+        {
+            date: "TBD",
+            title: "Counting Day",
+            description: "Results are declared.",
+            calendarLink: generateCalendarLink("Election Counting Day", "Results are declared.")
+        }
     ];
     if (status === 'Not Registered' || status === 'Unsure') {
         if (category === 'NRI/Overseas') {
@@ -61,6 +91,11 @@ app.post('/api/generate-guide', (req, res) => {
         });
     }
     res.json({ checklist, timeline });
+});
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
 });
 app.listen(port, () => {
     console.log(`Backend server running on port ${port}`);

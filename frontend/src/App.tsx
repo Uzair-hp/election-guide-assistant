@@ -33,7 +33,7 @@ function App() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/generate-guide', {
+      const response = await fetch('/api/generate-guide', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
